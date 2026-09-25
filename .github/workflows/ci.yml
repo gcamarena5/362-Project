@@ -1,30 +1,23 @@
-name: cpp-linter
+name: Clang Format
 
 on:
   push:
+  pull_request:
 
 jobs:
-  cpp-linter:
+  clang-format:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Run C++ linter
-        uses: cpp-linter/cpp-linter-action@main
-        id: linter
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          style: file
-          tidy-checks: ''
-          files-changed-only: false
-          thread-comments: false
-
-      - name: Check linter results
-        if: steps.linter.outputs.checks-failed != 0
+      - name: Install clang-format
         run: |
-          echo "some linter checks failed. ${{ steps.linter.outputs.checks-failed }}"
-          exit 1
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+
+      - name: Check formatting
+        run: |
+          find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h" -o -name "*.hpp" \) \
+            -exec clang-format --dry-run --Werror {} +
