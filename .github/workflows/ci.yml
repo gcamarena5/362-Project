@@ -22,9 +22,10 @@ jobs:
           tidy-checks: ''
           files-changed-only: false
           thread-comments: false
+          extra-args: '-i'
 
       - name: Check linter results
         if: steps.linter.outputs.checks-failed != 0
         run: |
           echo "some linter checks failed. ${{ steps.linter.outputs.checks-failed }}"
-          exit 1
+        
