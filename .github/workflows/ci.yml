@@ -1,29 +1,30 @@
-# This is a basic workflow to help you get started with Actions
+name: cpp-linter
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  cpp-linter:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+      - name: Run C++ linter
+        uses: cpp-linter/cpp-linter-action@main
+        id: linter
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          tidy-checks: ''
+          files-changed-only: false
+          thread-comments: false
 
-      - name: Check formatting
+      - name: Check linter results
+        if: steps.linter.outputs.checks-failed != 0
         run: |
-          find . \( -name "*.cpp" -o -name "*.h" -o -name "*.hpp" \) \
-            -exec clang-format --dry-run --Werror {} +
+          echo "some linter checks failed. ${{ steps.linter.outputs.checks-failed }}"
+          exit 1
