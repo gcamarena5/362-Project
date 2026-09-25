@@ -2,7 +2,7 @@ name: cpp-linter
 
 on:
   push:
-  
+
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
