@@ -21,6 +21,6 @@ jobs:
         run: |
           find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" \) \
             -exec clang-tidy {} \
-            --checks='bugprone-*,performance-*,readability-*' \
+            --checks='bugprone-*,performance-*,readability-*,modernize-*' \
             --warnings-as-errors='*' \
             -- -std=c++17 \;
