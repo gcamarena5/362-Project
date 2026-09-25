@@ -17,14 +17,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-format
 
-      - name: Check formatting
-        run: |
-          find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h" -o -name "*.hpp" \) \
-            -exec clang-format --dry-run --Werror {} +
-       
       - name: Show formatting differences
         run: |
           for file in $(find . -type f -name "*.cpp"); do
             echo "Checking $file"
             diff -u "$file" <(clang-format "$file") || true
           done
+
+      - name: Check formatting
+        run: |
+          find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h" -o -name "*.hpp" \) \
+            -exec clang-format --dry-run --Werror {} +
