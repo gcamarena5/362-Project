@@ -17,6 +17,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-format
 
+            #(Ba): This is optional, I just added so we can see what the format should look like, roughly
       - name: Show formatting differences
         run: |
           for file in $(find . -type f -name "*.cpp"); do
