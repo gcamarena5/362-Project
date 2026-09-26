@@ -16,6 +16,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang-tidy
+      
+          # (Ba) just to show suggestions. 
+      - name: Show clang-tidy suggestions
+        run: |
+            find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" \) \
+            -exec clang-tidy {} \
+            --checks='bugprone-*,performance-*,readability-*' \
+            -- -std=c++17 \; || true
 
       - name: Run clang-tidy
         run: |
