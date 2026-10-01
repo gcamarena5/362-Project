@@ -1,6 +1,10 @@
 #pragma once
+// Name: Justin Lai, Ba Dieu
+// Date: 9/30/2026
+
 #include <iostream>
 #include <vector>
+
 using namespace std;
 // jl: man, my home is in c# i hope i dont get anything wrong
 class Item
@@ -17,11 +21,34 @@ public:
 	// jl: constructor
 	Item(string sku, string name, string description, double baseCost, double discountPercent = 0)
 	{
+		// bd: Easier for me to remember _SKU naming scheme
+		//	001-## = Tool
+		//	002-## = Part
+		//	003-## = Snacks because I need some
+
 		_sku = sku;
+		
 		_name = name;
+		
 		_description = description;
+		
 		_baseCost = baseCost;
+		
 		_discountPercent = discountPercent;
+	}
+
+	// bd: edited: new default constructor
+	Item() {
+
+		_sku = "";
+
+		_name = "";
+
+		_description = "";
+
+		_baseCost = -1.0;
+
+		_discountPercent = -1.0;
 	}
 
 	// jl: idk if we actually need any other big 5 if we dont use pointers
@@ -39,7 +66,9 @@ public:
 	void SetDiscountPercent(double discountPercent) { _discountPercent = discountPercent; }
 
 	double GetDiscountCost() { return _baseCost * (1 - _discountPercent); }
-	string GetSummary() { return _sku + " " + _name + " " + _description + " " + to_string(_baseCost) + " " + to_string(_discountPercent); }
+	
+	// bd: edited: Get summary is in format where I can print to MYSQL Directly
+	string GetSummary() { return '\'' + _sku + "', '" + _name + "', '" + _description + "', " + to_string(_baseCost) + ", " + to_string(_discountPercent); }
 };
 
 class Database
