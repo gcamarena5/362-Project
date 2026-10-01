@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\User\source\repos\362-Project-MySQL\mysql-connector-c++-26.7.0-winx64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)mysql-connector-c++-26.7.0-debug\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>"C:\Users\User\source\repos\362-Project-MySQL\mysql-connector-c++-26.7.0-winx64\lib64\debug\vs14\mysqlcppconn.lib";%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\User\source\repos\362-Project-MySQL\mysql-connector-c++-26.7.0-winx64\lib64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"$(ProjectDir)mysql-connector-c++-26.7.0-debug\lib64\debug\vs14\mysqlcppconn.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)mysql-connector-c++-26.7.0-debug\lib64\debug;%(AdditionalIncludeDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,9 +136,8 @@
   <ItemGroup>
     <ClInclude Include="Input.h" />
     <ClInclude Include="Item.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="dummy.txt" />
+    <ClInclude Include="Demo.h" />
+    <ClInclude Include="Menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
