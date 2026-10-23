@@ -1,31 +1,26 @@
-name: Clang Format
+name: Clang Tidy
 
 on:
   push:
   pull_request:
 
 jobs:
-  clang-format:
+  clang-tidy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Install clang-format
+      - name: Install clang-tidy
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format
-
-            #(Ba): This is optional, I just added so we can see what the format should look like, roughly
-      - name: Show formatting differences
+          sudo apt-get install -y clang-tidy
+      
+      - name: Run clang-tidy (Warnings are suggestions)
         run: |
-          for file in $(find . -type f -name "*.cpp"); do
-            echo "Checking $file"
-            diff -u "$file" <(clang-format "$file") || true
-          done
-
-      - name: Check formatting
-        run: |
-          find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h" -o -name "*.hpp" \) \
-            -exec clang-format --dry-run --Werror {} +
+          find . -type f \( -name "*.cpp" -o -name "*.cc" -o -name "*.cxx" \) \
+            -exec clang-tidy {} \
+            --checks='bugprone-*,performance-*,readability-*' \
+            --warnings-as-errors='*' \
+            -- -std=c++17 \;
