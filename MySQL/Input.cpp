@@ -239,25 +239,33 @@ char inputChar(string prompt, bool alphaOrDigit)
 	return input;
 }
 
+
+
+
 //PreCondition: NA
 //PostCondition: returns any character
+
+//Greg - redid this function so that it can just accept enter
 char inputChar(string prompt)
 {
 	char input;
 	do
 	{
 		cout << prompt;
-		if (!(cin >> input))
+		input = cin.get();
+		
+		if (input == '\n')
 		{
-			cout << "ERROR: Invalid input. Must be a character type.\n";
-			cin.clear();
-			cin.ignore(999, '\n');
+			break;
 		}
 		else
+		{
+			cin.ignore(999, '\n');
 			break;
+		}
+		
 	} while (true);
-	cin.clear();
-	cin.ignore(999, '\n');
+	
 	return toupper(input);
 }
 
