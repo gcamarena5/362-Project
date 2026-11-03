@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Database.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

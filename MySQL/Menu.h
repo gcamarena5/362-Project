@@ -12,7 +12,7 @@
 // bd:Display/cout statement for menu
 // - Just a template from my previous 
 int menuOption() {
-    cout << "\n\tCPSC 362 - MySQL Terminal (demo)"
+    cout << "\n\tGroup 5 Auto Warehouse"
         << "\n\t" << string(60, char(205))
         << "\n\t 1. View current/Inventory"
         << "\n\t 2. Add Item"
