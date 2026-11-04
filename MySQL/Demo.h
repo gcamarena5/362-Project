@@ -41,7 +41,7 @@ void run() {
 
     try {
         //
-        sql::Connection* connection = driver->connect("tcp://127.0.0.1:3306", "admin", "toor");
+        sql::Connection* connection = driver->connect("tcp://group-5-databasee.cf2gsswo4zak.us-west-1.rds.amazonaws.com:3306", "admin", "jvl2j88OPMcx3HdZdeYx");
         stmt = (*connection).createStatement();
         cout << "\n\tConnection Sucess!\n";
         Sleep(2000);
