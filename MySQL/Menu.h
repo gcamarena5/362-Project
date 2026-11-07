@@ -42,7 +42,9 @@ void _menu_main(sql::Statement* stmt, sql::ResultSet* res) {
             break;
 
         case 2:
+
             cls();
+            inv_view(stmt, res, false);
             inv_add(stmt,res);
             cls();
 
@@ -50,12 +52,14 @@ void _menu_main(sql::Statement* stmt, sql::ResultSet* res) {
 
         case 3:
             cls();
+            inv_view(stmt, res, false);
             inv_del(stmt,res);
             cls();
             break;
 
         case 4:
             cls();
+            inv_view(stmt, res, false);
             inv_edit(stmt, res);
             cls();
             break;

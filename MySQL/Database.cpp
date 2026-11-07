@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mysql/jdbc.h>
+#include <set>
 #include <windows.h>
 #include "Input.h"
 #include "Item.h"
@@ -36,7 +37,7 @@ void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display = false) {
 // - comm: I does not play well with double format but this is due to MYSQL and init_database
 void inv_add(sql::Statement* stmt, sql::ResultSet* res) {
     Item test;
-    inv_view(stmt, res);
+   
 
     test.SetSKU(inputString("\n\tSku: ", true));
     test.SetName(inputString("\n\tName: ", true));
@@ -51,7 +52,7 @@ void inv_add(sql::Statement* stmt, sql::ResultSet* res) {
 // bd: Delete by SKU
 // -comm: Modernized so it doesn't use SKU but instead uses loop index
 void inv_del(sql::Statement* stmt, sql::ResultSet* res) {
-    inv_view(stmt, res);
+    
     (*stmt).executeUpdate("DELETE FROM inventory WHERE sku = \'" + inputString("\n\tPlease enter the sku to be deleted: ", true) + "';");
 
     inputChar("\n\tPress enter to continue...");
@@ -62,9 +63,26 @@ void inv_del(sql::Statement* stmt, sql::ResultSet* res) {
 // - comm: I does not play well with double format but this is due to MYSQL and init_databse
 void inv_edit(sql::Statement* stmt, sql::ResultSet* res) {
     cls();
-    inv_view(stmt, res);
+
     cout << "\n\tVariables: sku, name, description, baseCost, discountPercent\n\n";
     //"UPDATE inventory SET " + string + "WHERE " + string "
+
+/*
+
+string column = inputString("\n\tWhich variable would you like to edit?", true);
+
+    const set<string> allowedColumns = {
+        "sku", "name", "description", "baseCost", "discountPercent"
+    };
+
+    if (allowedColumns.find(column) == allowedColumns.end()) {
+        cout << "\n\tError. Invalid column name\n";
+        inputChar("\n\tPress enter to continue...");
+        return;
+    }
+*/
+    string inputSku = inputString("\n\tWhich Sku would you like to edit?", true);
+
 
     (*stmt).executeUpdate(
         "UPDATE inventory SET " +
