@@ -11,7 +11,10 @@
 // bd:View current inventory ()
 // - Needs a bit of work to be pretty but honestly, just for demo for this is all for backend
 
-void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display = false) {
+void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display) {
+    if (display) {
+        cls();
+    }
     int index = 1;
     res = (*stmt).executeQuery("SELECT * FROM inventory;");
     //Greg - Getting the metadata to then get the column data to remove any hard-coded constants
@@ -27,7 +30,7 @@ void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display = false) {
         //cout << (*res).getString(0) << (*res).getString(1) << << endl;
         index++;
     }
-    if (display == true) {
+    if (display) {
         inputChar("\n\tPress enter to continue...");
     }
 }
@@ -62,37 +65,54 @@ void inv_del(sql::Statement* stmt, sql::ResultSet* res) {
 // bd: Edit row in database
 // - comm: I does not play well with double format but this is due to MYSQL and init_databse
 void inv_edit(sql::Statement* stmt, sql::ResultSet* res) {
-    cls();
+ 
 
-    cout << "\n\tVariables: sku, name, description, baseCost, discountPercent\n\n";
-    //"UPDATE inventory SET " + string + "WHERE " + string "
+    //Greg: edited this to use prepared statements 
+    string skuEdit = inputString("\n\tWhich sku would you like to edit?\n\t", true);
+  
+    cout << "List of columns: name, description, baseCost, discountPercent\n\t";
+    string columnEdit = inputString("\n\tWhich column would you like to edit?\n\t", true);
 
-/*
-
-string column = inputString("\n\tWhich variable would you like to edit?", true);
-
-    const set<string> allowedColumns = {
-        "sku", "name", "description", "baseCost", "discountPercent"
+    //establishing a set of columns allowed
+    const set<string> allowedColumns =
+    {
+        "name", "description", "baseCost", "discountPercent"
     };
 
-    if (allowedColumns.find(column) == allowedColumns.end()) {
-        cout << "\n\tError. Invalid column name\n";
+    //checking if the column is not found
+    if (allowedColumns.find(columnEdit) == allowedColumns.end()) {
+        cout << "\n\tError: Invalid column name\n";
         inputChar("\n\tPress enter to continue...");
         return;
+
     }
-*/
-    string inputSku = inputString("\n\tWhich Sku would you like to edit?", true);
+    string newValue = inputString("\n\tEnter new value for this column\n\t", true);
+    try {
 
+        //getting the connection so we can use prepared statements
+        sql::Connection* connection = stmt->getConnection();
+        string query = "UPDATE inventory SET " + columnEdit + " = ? WHERE sku = ?";
 
-    (*stmt).executeUpdate(
-        "UPDATE inventory SET " +
-        inputString("\n\tWhich variable do you want to change: ", true) +
-        " = " +
-        inputString("\n\tWhat do you want to change it to: ", true) +
-        " WHERE sku = '" +
-        inputString("\n\tWhere do you want to change it(SKU): ", true) +
-        "';"
-    );
+        unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
 
-    inputChar("\n\tPress enter char then enter");
+        //ind parameters safely
+        pstmt->setString(1, newValue);
+        pstmt->setString(2, skuEdit);
+
+        int rowsAffected = pstmt->executeUpdate();
+
+        //if true the value will be more than 0, meaning our database was updated
+        if (rowsAffected > 0) {
+            cout << "\n\tSuccessfully updated SKU: " << skuEdit << "\n";
+        }
+        else {
+            cout << "\n\tWarning: No item found with SKU: " << skuEdit << "\n";
+        }
+    } 
+
+    catch (sql::SQLException& e) {
+        cout << "\n\tDatabase Error: " << e.what() << "\n";
+    }
+
+    inputChar("\n\tPress enter to continue...");
 }
