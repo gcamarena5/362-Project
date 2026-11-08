@@ -11,7 +11,7 @@ void _pop_database(sql::Connection* connection) {
     sql::ResultSet* res = nullptr;
 
     // bd: Create Schema test if test does not exist in current database
-    stmt = (*connection).createStatement();
+    stmt = connection->createStatement();
     (*stmt).execute("CREATE SCHEMA IF NOT EXISTS test;");
     connection->setSchema("test");
 
