@@ -55,9 +55,38 @@ void inv_add(sql::Statement* stmt, sql::ResultSet* res) {
 // bd: Delete by SKU
 // -comm: Modernized so it doesn't use SKU but instead uses loop index
 void inv_del(sql::Statement* stmt, sql::ResultSet* res) {
-    
-    (*stmt).executeUpdate("DELETE FROM inventory WHERE sku = \'" + inputString("\n\tPlease enter the sku to be deleted: ", true) + "';");
 
+    //Greg - redoing this to use prepared statements. Copying much from the inventory edit
+
+    string skuDelete = inputString("\n\tWhich sku would you like to delete?\n\t", true);
+   
+    try {
+
+        //getting the connection so we can use prepared statements
+        sql::Connection* connection = stmt->getConnection();
+        string query = "DELETE FROM inventory WHERE sku = ?";
+
+        unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
+
+        //ind parameters safely
+        pstmt->setString(1, skuDelete);
+     
+
+        int rowsAffected = pstmt->executeUpdate();
+
+        //if true the value will be more than 0, meaning our database was updated
+        if (rowsAffected > 0) {
+            cout << "\n\tSuccessfully deleted SKU: " << skuDelete << "\n";
+        }
+        else {
+            cout << "\n\tWarning: No item found with SKU: " << skuDelete << "\n";
+        }
+    }
+
+    catch (sql::SQLException& e) {
+        cout << "\n\tDatabase Error: " << e.what() << "\n";
+    }
+   
     inputChar("\n\tPress enter to continue...");
 }
 
