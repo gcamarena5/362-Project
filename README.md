@@ -19,3 +19,34 @@ The following are `NOT` valid locations:
   - Ex: `MySQL\mysql-connector-c++-26.7.0-debug\lib64\Copy of debug\debug\`
 
 If you have the following directory locations, move the following `debug` folder to `lib64`.
+
+## AWS EC2 Development Environment
+
+### Environment Setup
+- Operating System: Amazon Linux 2023
+- Development Environment: AWS EC2
+- Database: Shared Amazon RDS MySQL
+- Database Port: 3306
+
+### Database Connectivity
+- Configured personal AWS EC2 development environment.
+- Installed the MariaDB-compatible MySQL command-line client.
+- Attempted connectivity testing with the shared RDS database.
+
+### Development Progress
+- Prepared the environment for inventory dashboard development.
+- Documented AWS environment setup and database connectivity troubleshooting.
+- Preparing infrastructure for browser-based inventory dashboard development.
+
+## Project Contributors
+
+### Liliana Valdez
+**Role:** AWS EC2 Environment Setup & Database Connectivity
+
+**Contributions:**
+- Configured personal AWS EC2 development environment using Amazon Linux 2023.
+- Identified and configured access to the shared Group 5 Amazon RDS environment.
+- Installed the MariaDB-compatible MySQL command-line client.
+- Documented environment setup and database connectivity procedures.
+- Investigated database connectivity issues.
+- Planned infrastructure for browser-based inventory dashboard development.
