@@ -1,14 +1,17 @@
 #pragma once
 
 #include <iostream>
-#include <mysql/jdbc.h>
 #include <windows.h>
 #include "Input.h"
 #include "Item.h"
-void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display);
+#include "InventoryRepository.h"
 
-void inv_add(sql::Statement* stmt, sql::ResultSet* res);
+// Ethan: DIP. These now take the InventoryRepository abstraction instead of MySQL's
+// sql::Statement* and sql::ResultSet*, so this file no longer includes <mysql/jdbc.h>.
+void inv_view(InventoryRepository& repository, bool display);
 
-void inv_del(sql::Statement* stmt, sql::ResultSet* res);
+void inv_add(InventoryRepository& repository);
 
-void inv_edit(sql::Statement* stmt, sql::ResultSet* res);
+void inv_del(InventoryRepository& repository);
+
+void inv_edit(InventoryRepository& repository);

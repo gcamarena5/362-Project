@@ -2,6 +2,8 @@
 #include <iostream>
 #include <mysql/jdbc.h>
 #include "Menu.h"
+#include "MenuCommands.h"
+#include "MySqlInventoryRepository.h"
 
 void _pop_database(sql::Connection* connection) {
     // bd: Statement used for establishing commands like CREATE or DROP.
@@ -48,7 +50,16 @@ void run() {
         cls();
 
         _pop_database(connection);
-        _menu_main(stmt, res);
+        // Ethan: the only place that picks MySQL (DIP) and lists the menu options (OCP)
+        MySqlInventoryRepository repository(stmt);
+
+        ViewCommand viewOption(repository);
+        AddCommand addOption(repository);
+        RemoveCommand removeOption(repository);
+        EditCommand editOption(repository);
+        vector<MenuCommand*> commands = { &viewOption, &addOption, &removeOption, &editOption };
+
+        _menu_main(commands);
 
         delete connection;
     }
