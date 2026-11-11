@@ -1,4 +1,13 @@
-# MySQL
+# Title: Group 5 Warehouse 
+
+## Description: A warehouse program that uses client side C++ to interact with an AWS RDS server
+
+# Table of contents:
+### Project Description
+### Tech Stack  
+### Features 
+
+# A guide: 
 Before Running
 -
 Because the binary files are larger than 100MB, a `Copy of debug.7z` has been made for you as an all-in-one clone. Before running the `.sln`, please unzip or extract the file.
@@ -50,3 +59,15 @@ If you have the following directory locations, move the following `debug` folder
 - Documented environment setup and database connectivity procedures.
 - Investigated database connectivity issues.
 - Planned infrastructure for browser-based inventory dashboard development.
+
+
+# Project description:
+## This is an automotive warehouse inventory program that solves the issue of using paper trails in regards to inventory. It communicates with a hosted database, making it accessible almost anywhere. It solves the issue of having locked down access to said database. 
+
+# Tech Stack:
+## This uses C++ for the client side program. The connector is "MySqLConnector". Our lintr is Clangtidy. Our database is hosted using AWS. 
+
+## Features:
+## This program features the ability to add, delete, edit, and view an inventory database. 
+
+
