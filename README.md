@@ -81,6 +81,10 @@ Hit 2 to add items. Add in various information
 
 Hit 3 to delete 
 
+<img width="802" height="142" alt="image" src="https://github.com/user-attachments/assets/8e076c13-1eb0-46f8-ae48-aacc237673a7" />
+
+Hit 4 to exit
+
 
 
 
