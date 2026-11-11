@@ -6,6 +6,7 @@
 ### Project Description
 ### Tech Stack  
 ### Features 
+### How to use it
 
 # A guide: 
 Before Running
@@ -63,6 +64,26 @@ If you have the following directory locations, move the following `debug` folder
 
 # Project description:
 ## This is an automotive warehouse inventory program that solves the issue of using paper trails in regards to inventory. It communicates with a hosted database, making it accessible almost anywhere. It solves the issue of having locked down access to said database. 
+
+# How to use: 
+## Before anything, make sure the AWS server is up and running. Connect and you will be prompted with a menu.
+<img width="902" height="286" alt="image" src="https://github.com/user-attachments/assets/8979c59c-f586-4852-a8ea-5f13a04c7cf1" />
+
+Hit 1 to view inventory
+
+<img width="822" height="85" alt="image" src="https://github.com/user-attachments/assets/1d5e987d-e87f-4d78-ab5c-2251b3b581e8" />
+
+Hit 2 to add items. Add in various information
+
+
+
+<img width="752" height="307" alt="image" src="https://github.com/user-attachments/assets/b5c0dfdc-8398-4855-bc2a-c7fd0e29f104" />
+
+Hit 3 to delete 
+
+
+
+
 
 # Tech Stack:
 ## This uses C++ for the client side program. The connector is "MySqLConnector". Our lintr is Clangtidy. Our database is hosted using AWS. 
