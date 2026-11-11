@@ -70,4 +70,5 @@ If you have the following directory locations, move the following `debug` folder
 ## Features:
 ## This program features the ability to add, delete, edit, and view an inventory database. 
 
-
+## Directory structure: 
+## 
