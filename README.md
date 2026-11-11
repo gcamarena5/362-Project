@@ -96,4 +96,131 @@ Hit 4 to exit
 ## This program features the ability to add, delete, edit, and view an inventory database. 
 
 ## Directory structure: 
-## 
+## Project Structure
+
+```text
+.
+|-- MySQL
+|   |-- Database.cpp
+|   |-- Database.h
+|   |-- Demo.h
+|   |-- Input.cpp
+|   |-- Input.h
+|   |-- Item.h
+|   |-- Menu.h
+|   |-- MySQL.vcxproj
+|   |-- MySQL.vcxproj.filters
+|   |-- X64
+|   |   `-- debug
+|   |       |-- libcrypto-3-x64.dll
+|   |       |-- libssl-3-x64.dll
+|   |       |-- mysqlcppconn-10-vs14.dll
+|   |       |-- mysqlcppconn-10-vs14.pdb
+|   |       |-- mysqlcppconnx-2-vs14.dll
+|   |       `-- mysqlcppconnx-2-vs14.pdb
+|   |-- env
+|   |   `-- x64-debug
+|   |       |-- MySQL.exe
+|   |       |-- libcrypto-3-x64.dll
+|   |       |-- libssl-3-x64.dll
+|   |       |-- mysqlcppconn-10-vs14.dll
+|   |       `-- mysqlcppconnx-2-vs14.dll
+|   |-- main.cpp
+|   `-- mysql-connector-c++-26.7.0-debug
+|       |-- CONTRIBUTING.md
+|       |-- INFO_BIN
+|       |-- INFO_SRC
+|       |-- LICENSE.txt
+|       |-- README.txt
+|       |-- include
+|       |   |-- jdbc
+|       |   |   |-- cppconn
+|       |   |   |   |-- build_config.h
+|       |   |   |   |-- callback.h
+|       |   |   |   |-- config.h
+|       |   |   |   |-- connection.h
+|       |   |   |   |-- datatype.h
+|       |   |   |   |-- driver.h
+|       |   |   |   |-- exception.h
+|       |   |   |   |-- metadata.h
+|       |   |   |   |-- parameter_metadata.h
+|       |   |   |   |-- prepared_statement.h
+|       |   |   |   |-- resultset.h
+|       |   |   |   |-- resultset_metadata.h
+|       |   |   |   |-- sqlstring.h
+|       |   |   |   |-- statement.h
+|       |   |   |   |-- variant.h
+|       |   |   |   |-- version_info.h
+|       |   |   |   `-- warning.h
+|       |   |   |-- mysql_connection.h
+|       |   |   |-- mysql_driver.h
+|       |   |   `-- mysql_error.h
+|       |   |-- mysql
+|       |   |   `-- jdbc.h
+|       |   `-- mysqlx
+|       |       |-- common
+|       |       |   |-- api.h
+|       |       |   |-- error.h
+|       |       |   |-- op_if.h
+|       |       |   |-- settings.h
+|       |       |   |-- util.h
+|       |       |   `-- value.h
+|       |       |-- common.h
+|       |       |-- common_constants.h
+|       |       |-- devapi
+|       |       |   |-- collations.h
+|       |       |   |-- collection_crud.h
+|       |       |   |-- common.h
+|       |       |   |-- crud.h
+|       |       |   |-- detail
+|       |       |   |   |-- crud.h
+|       |       |   |   |-- error.h
+|       |       |   |   |-- result.h
+|       |       |   |   |-- row.h
+|       |       |   |   |-- session.h
+|       |       |   |   `-- settings.h
+|       |       |   |-- document.h
+|       |       |   |-- error.h
+|       |       |   |-- executable.h
+|       |       |   |-- mysql_charsets.h
+|       |       |   |-- mysql_collations.h
+|       |       |   |-- result.h
+|       |       |   |-- row.h
+|       |       |   |-- settings.h
+|       |       |   `-- table_crud.h
+|       |       |-- version_info.h
+|       |       |-- xapi.h
+|       |       `-- xdevapi.h
+|       |-- lib64
+|       |   |-- Copy of debug.7z
+|       |   |-- debug
+|       |   |   |-- mysqlcppconn-10-vs14.dll
+|       |   |   |-- mysqlcppconn-10-vs14.pdb
+|       |   |   |-- mysqlcppconnx-2-vs14.dll
+|       |   |   |-- mysqlcppconnx-2-vs14.pdb
+|       |   |   `-- vs14
+|       |   |       |-- mysqlcppconn-static.lib
+|       |   |       |-- mysqlcppconn.lib
+|       |   |       |-- mysqlcppconnx-static.lib
+|       |   |       `-- mysqlcppconnx.lib
+|       |   |-- libcrypto-3-x64.dll
+|       |   |-- libssl-3-x64.dll
+|       |   |-- plugin
+|       |   |   |-- authentication_kerberos_client.dll
+|       |   |   |-- authentication_ldap_sasl_client.dll
+|       |   |   |-- authentication_oci_client.dll
+|       |   |   |-- authentication_openid_connect_client.dll
+|       |   |   |-- authentication_webauthn_client.dll
+|       |   |   `-- mysql_native_password.dll
+|       |   `-- vs14
+|       |       |-- libcrypto.lib
+|       |       `-- libssl.lib
+|       |-- mysql-concpp-config-version.cmake
+|       `-- mysql-concpp-config.cmake
+|-- MySQL.sln
+|-- README.md
+|-- test.cpp
+`-- tree.txt
+
+19 directories, 102 files
+```
