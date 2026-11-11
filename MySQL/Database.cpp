@@ -1,147 +1,169 @@
 #include <iostream>
 #include <mysql/jdbc.h>
 #include <set>
+#include <memory>
 #include <windows.h>
 #include "Input.h"
 #include "Item.h"
 #include "Database.h"
 
+using namespace std;
 
-//purpose of this is to localize interaction with the database here, and to then connect it to "Menu.h"
-// bd:View current inventory ()
-// - Needs a bit of work to be pretty but honestly, just for demo for this is all for backend
+// Checks whether an inventory SKU already exists.
+// Uses a prepared statement so the SKU is treated as data, not SQL.
+static bool skuExists(sql::Statement* stmt, const string& sku) {
+    try {
+        sql::Connection* connection = stmt->getConnection();
+        unique_ptr<sql::PreparedStatement> pstmt(
+            connection->prepareStatement("SELECT 1 FROM inventory WHERE sku = ? LIMIT 1"));
+        pstmt->setString(1, sku);
 
-void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display) {
-    if (display) {
-        cls();
+        unique_ptr<sql::ResultSet> result(pstmt->executeQuery());
+        return result->next();
     }
-    int index = 1;
-    res = (*stmt).executeQuery("SELECT * FROM inventory;");
-    //Greg - Getting the metadata to then get the column data to remove any hard-coded constants
-    sql::ResultSetMetaData* metaData = res->getMetaData();
+    catch (const sql::SQLException& e) {
+        cout << "\\n\\tDatabase Error while checking SKU: " << e.what() << "\\n";
+        return false;
+    }
+}
 
+
+// View current inventory.
+void inv_view(sql::Statement* stmt, sql::ResultSet* res, bool display) {
+    if (display) cls();
+
+    int index = 1;
+    res = stmt->executeQuery("SELECT * FROM inventory;");
+    sql::ResultSetMetaData* metaData = res->getMetaData();
     int numColumns = metaData->getColumnCount();
 
-    while ((*res).next()) {
-        cout << "\n\t[ " + to_string(index) + "] ";
-        for (int i = 1; i < numColumns + 1; i++) {
-            cout << (*res).getString(i) << " ";
+    while (res->next()) {
+        cout << "\\n\\t[ " << index << "] ";
+        for (int i = 1; i <= numColumns; i++) {
+            cout << res->getString(i) << " ";
         }
-        //cout << (*res).getString(0) << (*res).getString(1) << << endl;
         index++;
     }
-    if (display) {
-        inputChar("\n\tPress enter to continue...");
-    }
+
+    if (display) inputChar("\\n\\tPress enter to continue...");
 }
 
-
-// bd: Add "ITEM" to Database
-// - comm: I does not play well with double format but this is due to MYSQL and init_database
+// Add an item. Reject a SKU that is already present.
 void inv_add(sql::Statement* stmt, sql::ResultSet* res) {
-    Item test;
-   
+    Item item;
 
-    test.SetSKU(inputString("\n\tSku: ", true));
-    test.SetName(inputString("\n\tName: ", true));
-    test.SetDescription(inputString("\n\tDescription: ", true));
-    test.SetBaseCost(inputDouble("\n\tBase Cost: "));
-    test.SetDiscountPercent(0);
-    (*stmt).executeUpdate("INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + test.GetSummary() + ");");
-    inputChar("\n\tPress enter to continue...");
-    //cout << "INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + test.GetSummary() + ");";
+    string sku = inputString("\\n\\tSKU: ", true, false);
+    if (skuExists(stmt, sku)) {
+        cout << "\\n\\tError: An item with SKU '" << sku << "' already exists.\\n";
+        inputChar("\\n\\tPress enter to continue...");
+        return;
+    }
+
+    item.SetSKU(sku);
+    item.SetName(inputString("\\n\\tName: ", true, false));
+    item.SetDescription(inputString("\\n\\tDescription: ", true, true));
+    item.SetBaseCost(inputDouble("\\n\\tBase Cost: ", 0.0, true));
+    item.SetDiscountPercent(0);
+
+    // NOTE: This INSERT is still a Statement. Convert it to a PreparedStatement
+    // separately (the prepared-statement task) to avoid SQL injection.
+    try {
+        stmt->executeUpdate(
+            "INSERT INTO inventory (sku, name, description, baseCost, discountPercent) VALUES ("
+            + item.GetSummary() + ");");
+        cout << "\\n\\tItem added successfully.\\n";
+    }
+    catch (const sql::SQLException& e) {
+        cout << "\\n\\tDatabase Error: " << e.what() << "\\n";
+    }
+
+    inputChar("\\n\\tPress enter to continue...");
 }
 
-// bd: Delete by SKU
-// -comm: Modernized so it doesn't use SKU but instead uses loop index
+// Delete by SKU. Verify that the item exists before running DELETE.
 void inv_del(sql::Statement* stmt, sql::ResultSet* res) {
+    string skuDelete = inputString("\\n\\tWhich SKU would you like to delete?\\n\\t", true, false);
 
-    //Greg - redoing this to use prepared statements. Copying much from the inventory edit
+    if (!skuExists(stmt, skuDelete)) {
+        cout << "\\n\\tNo item exists with SKU '" << skuDelete << "'. Nothing was deleted.\\n";
+        inputChar("\\n\\tPress enter to continue...");
+        return;
+    }
 
-    string skuDelete = inputString("\n\tWhich sku would you like to delete?\n\t", true);
-   
     try {
-
-        //getting the connection so we can use prepared statements
         sql::Connection* connection = stmt->getConnection();
-        string query = "DELETE FROM inventory WHERE sku = ?";
-
-        unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
-
-        //ind parameters safely
+        unique_ptr<sql::PreparedStatement> pstmt(
+            connection->prepareStatement("DELETE FROM inventory WHERE sku = ?"));
         pstmt->setString(1, skuDelete);
-     
 
         int rowsAffected = pstmt->executeUpdate();
-
-        //if true the value will be more than 0, meaning our database was updated
-        if (rowsAffected > 0) {
-            cout << "\n\tSuccessfully deleted SKU: " << skuDelete << "\n";
-        }
-        else {
-            cout << "\n\tWarning: No item found with SKU: " << skuDelete << "\n";
-        }
+        if (rowsAffected > 0)
+            cout << "\\n\\tSuccessfully deleted SKU: " << skuDelete << "\\n";
+        else
+            cout << "\\n\\tItem was not deleted; it may have been removed by another user.\\n";
+    }
+    catch (const sql::SQLException& e) {
+        cout << "\\n\\tDatabase Error: " << e.what() << "\\n";
     }
 
-    catch (sql::SQLException& e) {
-        cout << "\n\tDatabase Error: " << e.what() << "\n";
-    }
-   
-    inputChar("\n\tPress enter to continue...");
+    inputChar("\\n\\tPress enter to continue...");
 }
 
-
-// bd: Edit row in database
-// - comm: I does not play well with double format but this is due to MYSQL and init_databse
+// Edit an item. Verify SKU existence before asking for the column/value.
 void inv_edit(sql::Statement* stmt, sql::ResultSet* res) {
- 
+    string skuEdit = inputString("\\n\\tWhich SKU would you like to edit?\\n\\t", true, false);
 
-    //Greg: edited this to use prepared statements 
-    string skuEdit = inputString("\n\tWhich sku would you like to edit?\n\t", true);
-  
-    cout << "List of columns: name, description, baseCost, discountPercent\n\t";
-    string columnEdit = inputString("\n\tWhich column would you like to edit?\n\t", true);
+    if (!skuExists(stmt, skuEdit)) {
+        cout << "\\n\\tNo item exists with SKU '" << skuEdit << "'. Nothing was changed.\\n";
+        inputChar("\\n\\tPress enter to continue...");
+        return;
+    }
 
-    //establishing a set of columns allowed
-    const set<string> allowedColumns =
-    {
+    cout << "List of columns: name, description, baseCost, discountPercent\\n\\t";
+    string columnEdit = inputString("\\n\\tWhich column would you like to edit?\\n\\t", true, false);
+
+    // Only these fixed column names may be inserted into the UPDATE query.
+    const set<string> allowedColumns = {
         "name", "description", "baseCost", "discountPercent"
     };
 
-    //checking if the column is not found
     if (allowedColumns.find(columnEdit) == allowedColumns.end()) {
-        cout << "\n\tError: Invalid column name\n";
-        inputChar("\n\tPress enter to continue...");
+        cout << "\\n\\tError: Invalid column name.\\n";
+        inputChar("\\n\\tPress enter to continue...");
         return;
-
     }
-    string newValue = inputString("\n\tEnter new value for this column\n\t", true);
-    try {
 
-        //getting the connection so we can use prepared statements
+    string newValue;
+    if (columnEdit == "name") {
+        newValue = inputString("\\n\\tEnter new name: ", true, false);
+    }
+    else if (columnEdit == "description") {
+        newValue = inputString("\\n\\tEnter new description: ", true, true);
+    }
+    else if (columnEdit == "baseCost") {
+        newValue = to_string(inputDouble("\\n\\tEnter new base cost: ", 0.0, true));
+    }
+    else { // discountPercent
+        // Database column stores a decimal fraction: 0.15 means 15%.
+        newValue = to_string(inputDouble("\\n\\tEnter discount (0.00 to 1.00): ", 0.0, 1.0));
+    }
+
+    try {
         sql::Connection* connection = stmt->getConnection();
         string query = "UPDATE inventory SET " + columnEdit + " = ? WHERE sku = ?";
-
         unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
-
-        //ind parameters safely
         pstmt->setString(1, newValue);
         pstmt->setString(2, skuEdit);
 
         int rowsAffected = pstmt->executeUpdate();
-
-        //if true the value will be more than 0, meaning our database was updated
-        if (rowsAffected > 0) {
-            cout << "\n\tSuccessfully updated SKU: " << skuEdit << "\n";
-        }
-        else {
-            cout << "\n\tWarning: No item found with SKU: " << skuEdit << "\n";
-        }
-    } 
-
-    catch (sql::SQLException& e) {
-        cout << "\n\tDatabase Error: " << e.what() << "\n";
+        if (rowsAffected > 0)
+            cout << "\\n\\tSuccessfully updated SKU: " << skuEdit << "\\n";
+        else
+            cout << "\\n\\tNo values changed. The item may have been modified by another user.\\n";
+    }
+    catch (const sql::SQLException& e) {
+        cout << "\\n\\tDatabase Error: " << e.what() << "\\n";
     }
 
-    inputChar("\n\tPress enter to continue...");
+    inputChar("\\n\\tPress enter to continue...");
 }
