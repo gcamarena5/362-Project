@@ -1,3 +1,4 @@
+// Input validation functions for the inventory application.
 #include <iostream>
 #include <algorithm>
 #include <string>
