@@ -1,74 +1,48 @@
-// Name: Ba Dieu, Justin Lai, Greg Camarena, Liliana Valdez
-// Date:9/30/26
+// Name: Ba Dieu, Justin Lai, Greg Camarena, Liliana Valdez, Ethan Villa
+// Date:11/10/26
 #pragma once
 #include <iostream>
-#include <mysql/jdbc.h>
+#include <vector>
 #include <windows.h>
 #include "Input.h"
 #include "Item.h"
-#include "Database.h"
+#include "MenuCommand.h"
 
 
 // bd:Display/cout statement for menu
-// - Just a template from my previous 
-int menuOption() {
+// - Just a template from my previous
+// Ethan: OCP. The option lines come from each command's label() instead of being typed here.
+int menuOption(const vector<MenuCommand*>& commands) {
     cout << "\n\tGroup 5 Auto Warehouse"
-        << "\n\t" << string(60, char(205))
-        << "\n\t 1. View current/Inventory"
-        << "\n\t 2. Add Item"
-        << "\n\t 3. Remove Item"
-        << "\n\t 4. Edit Item"
-        << "\n\t" << string(60, char(196))
+        << "\n\t" << string(60, char(205));
+    for (size_t i = 0; i < commands.size(); i++) {
+        cout << "\n\t " << (i + 1) << ". " << commands[i]->label();
+    }
+    cout << "\n\t" << string(60, char(196))
         << "\n\t 0. Exit"
         << "\n\t" << string(60, char(205)) << endl;
-    return inputInteger("\tOption: ", 0, 4);
+    return inputInteger("\tOption: ", 0, static_cast<int>(commands.size()));
 }
 
 
 // bd: main menu
 // - self explanitory
-void _menu_main(sql::Statement* stmt, sql::ResultSet* res) {
+// Ethan: DIP, It no longer takes MySQL's stmt and res.
+void _menu_main(const vector<MenuCommand*>& commands) {
     bool running = true;
 
 
     while (running) {
 
-        switch (menuOption())
-        {
-        case 1:
-            cls();
-            inv_view(stmt,res,true);
-            cls();
-            break;
+        int choice = menuOption(commands);
+        cls();
 
-        case 2:
-
-            cls();
-            inv_view(stmt, res, false);
-            inv_add(stmt,res);
-            cls();
-
-            break;
-
-        case 3:
-            cls();
-            inv_view(stmt, res, false);
-            inv_del(stmt,res);
-            cls();
-            break;
-
-        case 4:
-            cls();
-            inv_view(stmt, res, false);
-            inv_edit(stmt, res);
-            cls();
-            break;
-        case 0:
-            cls();
+        if (choice == 0) {
             running = false;
-            break;
-        default:
-            break;
+        }
+        else {
+            commands[choice - 1]->run();
+            cls();
         }
 
 

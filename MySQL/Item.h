@@ -1,9 +1,10 @@
 #pragma once
-// Name: Ba Dieu, Justin Lai, Greg Camarena, Liliana Valdez
-// Date: 9/30/2026
+// Name: Ba Dieu, Justin Lai, Greg Camarena, Liliana Valdez, Ethan Villa
+// Date: 11/11/2026
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 // jl: man, my home is in c# i hope i dont get anything wrong

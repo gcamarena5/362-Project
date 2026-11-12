@@ -143,6 +143,10 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="InventoryRepository.h" />
+    <ClInclude Include="MenuCommand.h" />
+    <ClInclude Include="MenuCommands.h" />
+    <ClInclude Include="MySqlInventoryRepository.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
