@@ -38,7 +38,7 @@ public:
 	// From inv_add
 	void add(Item item) override
 	{
-		(*_stmt).executeUpdate("INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + item.GetSummary() + ");");
+		(*_stmt).executeUpdate("INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent, location, warehouse, count) VALUES (" + item.GetSummary() + ");");
 	}
 
 	// From inv_del
