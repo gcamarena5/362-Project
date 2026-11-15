@@ -57,7 +57,8 @@ void run() {
         AddCommand addOption(repository);
         RemoveCommand removeOption(repository);
         EditCommand editOption(repository);
-        vector<MenuCommand*> commands = { &viewOption, &addOption, &removeOption, &editOption };
+        ImportCommand importOption(repository);
+        vector<MenuCommand*> commands = { &viewOption, &addOption, &removeOption, &editOption, &importOption};
 
         _menu_main(commands);
 

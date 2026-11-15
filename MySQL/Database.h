@@ -15,3 +15,5 @@ void inv_add(InventoryRepository& repository);
 void inv_del(InventoryRepository& repository);
 
 void inv_edit(InventoryRepository& repository);
+
+void inv_file_add(InventoryRepository& repository);

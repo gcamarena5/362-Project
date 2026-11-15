@@ -23,4 +23,6 @@ public:
 
 	// Throws std::runtime_error if the database fails.
 	virtual bool updateField(const std::string& sku, const std::string& column, const std::string& newValue) = 0;
+
+	virtual void importCsv(const std::string& filePath) = 0;
 };

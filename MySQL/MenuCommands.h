@@ -50,3 +50,21 @@ public:
 private:
 	InventoryRepository& _repository;
 };
+
+// case 5 s
+class ImportCommand : public MenuCommand
+{
+public:
+	explicit ImportCommand(InventoryRepository & repository) : _repository(repository) {}
+	std::string label() const override {
+		return "Import Inventory from CSV";
+	}
+
+	void run() override {
+		std::string filePath = inputString("\n\tEnter path to CSV file (e.g., inventory.csv):\n\t", true);
+		_repository.importCsv(filePath);
+	}
+
+private:
+	InventoryRepository& _repository;
+};
