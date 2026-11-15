@@ -8,6 +8,8 @@
 #include <vector>
 #include <mysql/jdbc.h>
 #include "InventoryRepository.h"
+#include <fstream>
+#include <sstream>
 
 class MySqlInventoryRepository : public InventoryRepository
 {
@@ -89,7 +91,90 @@ public:
 			throw std::runtime_error(e.what());
 		}
 	}
+	// From CSV Import
+	void importCsv(const std::string& filePath) override
+	{
+		std::ifstream file(filePath);
+		if (!file.is_open()) {
+			throw std::runtime_error("Could not open file: " + filePath);
+		}
 
+		std::string line;
+		int successCount = 0;
+		int errorCount = 0;
+
+		try {
+			sql::Connection* connection = _stmt->getConnection();
+
+			// Updated query for all 8 columns
+			std::string query = "INSERT INTO inventory (sku, name, description, baseCost, discountPercent, location, warehouse, count) "
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
+				"ON DUPLICATE KEY UPDATE "
+				"name = VALUES(name), "
+				"description = VALUES(description), "
+				"baseCost = VALUES(baseCost), "
+				"discountPercent = VALUES(discountPercent), "
+				"location = VALUES(location), "
+				"warehouse = VALUES(warehouse), "
+				"count = VALUES(count)";
+
+			std::unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
+
+			// Skip header row
+			if (std::getline(file, line)) {
+				// Header skipped
+			}
+
+			while (std::getline(file, line)) {
+				if (line.empty()) continue;
+
+				std::stringstream ss(line);
+				std::string sku, name, description, baseCostStr, discountPercentStr, location, warehouse, countStr;
+
+				// Parse all 8 comma-separated values in exact order
+				if (std::getline(ss, sku, ',') &&
+					std::getline(ss, name, ',') &&
+					std::getline(ss, description, ',') &&
+					std::getline(ss, baseCostStr, ',') &&
+					std::getline(ss, discountPercentStr, ',') &&
+					std::getline(ss, location, ',') &&
+					std::getline(ss, warehouse, ',') &&
+					std::getline(ss, countStr, ',')) {
+
+					try {
+						// Bind parameters sequentially (1-indexed)
+						pstmt->setString(1, sku);
+						pstmt->setString(2, name);
+						pstmt->setString(3, description);
+						pstmt->setDouble(4, std::stod(baseCostStr));
+						pstmt->setDouble(5, std::stod(discountPercentStr));
+						pstmt->setString(6, location);
+						pstmt->setString(7, warehouse);
+						pstmt->setInt(8, std::stoi(countStr));
+
+						pstmt->executeUpdate();
+						successCount++;
+					}
+					catch (...) {
+						errorCount++;
+					}
+				}
+				else {
+					errorCount++;
+				}
+			}
+
+			file.close();
+			std::cout << "\n\tCSV Import Complete!\n";
+			std::cout << "\tSuccessfully imported/updated: " << successCount << " rows.\n";
+			if (errorCount > 0) {
+				std::cout << "\tSkipped/Failed rows: " << errorCount << "\n";
+			}
+		}
+		catch (sql::SQLException& e) {
+			throw std::runtime_error(e.what());
+		}
+	}
 private:
 	sql::Statement* _stmt;
 };
