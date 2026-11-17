@@ -36,12 +36,17 @@ void inv_view(InventoryRepository& repository, bool display) {
 void inv_add(InventoryRepository& repository) {
     Item test;
    
+    // JL (2): I PLAN TO OVERHAUL THIS ENTIRE SECTION, REMINDER REMINDER REMINDER
 
     test.SetSKU(inputString("\n\tSku: ", true));
     test.SetName(inputString("\n\tName: ", true));
     test.SetDescription(inputString("\n\tDescription: ", true));
     test.SetBaseCost(inputDouble("\n\tBase Cost: "));
     test.SetDiscountPercent(0);
+    test.SetLocation(inputString("\n\tLocation: ", true)); // jl (2): adding new info, may need to swap order if it makes sense to?
+    test.SetWarehouse(inputString("\n\tWarehouse: ", true));
+    test.SetCount(inputInteger("\n\tCount: "));
+
     repository.add(test); // Ethan: DIP. The INSERT moved to MySqlInventoryRepository::add()
     inputChar("\n\tPress enter to continue...");
     //cout << "INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + test.GetSummary() + ");";
@@ -82,13 +87,14 @@ void inv_edit(InventoryRepository& repository) {
     //Greg: edited this to use prepared statements 
     string skuEdit = inputString("\n\tWhich sku would you like to edit?\n\t", true);
   
-    cout << "List of columns: name, description, baseCost, discountPercent\n\t";
+    //jl (2): adding to this to include location, etc. also, should we change this to a numerical input option?
+    cout << "List of columns: name, description, baseCost, discountPercent, location, warehouse, count\n\t";
     string columnEdit = inputString("\n\tWhich column would you like to edit?\n\t", true);
 
     //establishing a set of columns allowed
     const set<string> allowedColumns =
     {
-        "name", "description", "baseCost", "discountPercent"
+        "name", "description", "baseCost", "discountPercent", "location", "warehouse", "count"
     };
 
     //checking if the column is not found
