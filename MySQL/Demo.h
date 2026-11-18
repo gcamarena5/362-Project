@@ -2,6 +2,8 @@
 #include <iostream>
 #include <mysql/jdbc.h>
 #include "Menu.h"
+#include "MenuCommands.h"
+#include "MySqlInventoryRepository.h"
 
 void _pop_database(sql::Connection* connection) {
     // bd: Statement used for establishing commands like CREATE or DROP.
@@ -11,7 +13,7 @@ void _pop_database(sql::Connection* connection) {
     sql::ResultSet* res = nullptr;
 
     // bd: Create Schema test if test does not exist in current database
-    stmt = (*connection).createStatement();
+    stmt = connection->createStatement();
     (*stmt).execute("CREATE SCHEMA IF NOT EXISTS test;");
     connection->setSchema("test");
 
@@ -41,14 +43,23 @@ void run() {
 
     try {
         //
-        sql::Connection* connection = driver->connect("tcp://127.0.0.1:3306", "admin", "toor");
+        sql::Connection* connection = driver->connect("tcp://group-5-databasee.cf2gsswo4zak.us-west-1.rds.amazonaws.com:3306", "admin", "jvl2j88OPMcx3HdZdeYx");
         stmt = (*connection).createStatement();
         cout << "\n\tConnection Sucess!\n";
         Sleep(2000);
         cls();
 
         _pop_database(connection);
-        _menu_main(stmt, res);
+        // Ethan: the only place that picks MySQL (DIP) and lists the menu options (OCP)
+        MySqlInventoryRepository repository(stmt);
+
+        ViewCommand viewOption(repository);
+        AddCommand addOption(repository);
+        RemoveCommand removeOption(repository);
+        EditCommand editOption(repository);
+        vector<MenuCommand*> commands = { &viewOption, &addOption, &removeOption, &editOption };
+
+        _menu_main(commands);
 
         delete connection;
     }
