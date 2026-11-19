@@ -36,9 +36,30 @@ public:
 	}
 
 	// From inv_add
+	// Ethan: DIP. Now uses a prepared statement like remove() and updateField(), so the SQL
+	// is written here instead of being built by Item::GetSummary(). Item no longer knows SQL.
 	void add(Item item) override
 	{
-		(*_stmt).executeUpdate("INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + item.GetSummary() + ");");
+		try {
+			//getting the connection so we can use prepared statement. 
+			sql::Connection* connection = _stmt->getConnection();
+			std::string query = "INSERT INTO inventory (sku, name, description, baseCost, discountPercent) VALUES (?, ?, ?, ?, ?)";
+
+			std::unique_ptr<sql::PreparedStatement> pstmt(connection->prepareStatement(query));
+
+			pstmt->setString(1, item.GetSKU());
+			pstmt->setString(2, item.GetName());
+			pstmt->setString(3, item.GetDescription());
+			pstmt->setDouble(4, item.GetBaseCost());
+			pstmt->setDouble(5, item.GetDiscountPercent());
+
+			pstmt->executeUpdate();
+		}
+		catch (sql::SQLException& e) {
+			// Ethan: LSP. Rethrown as a standard error, same as remove() and updateField(),
+			// so every method fails the way InventoryRepository says it does.
+			throw std::runtime_error(e.what());
+		}
 	}
 
 	// From inv_del

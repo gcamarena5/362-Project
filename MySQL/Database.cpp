@@ -42,9 +42,18 @@ void inv_add(InventoryRepository& repository) {
     test.SetDescription(inputString("\n\tDescription: ", true));
     test.SetBaseCost(inputDouble("\n\tBase Cost: "));
     test.SetDiscountPercent(0);
-    repository.add(test); // Ethan: DIP. The INSERT moved to MySqlInventoryRepository::add()
+
+    // Ethan: same try/catch as inv_del, so a failed add, for example if i add the same item twice, shows an
+    // error and goes back to the menu instead of ending the program, and blowing up the moon.
+    try {
+        repository.add(test); // Ethan: DIP. The INSERT moved to MySqlInventoryRepository::add()
+        cout << "\n\tSuccessfully added SKU: " << test.GetSKU() << "\n";
+    }
+    catch (std::exception& e) {
+        cout << "\n\tDatabase Error: " << e.what() << "\n";
+    }
+
     inputChar("\n\tPress enter to continue...");
-    //cout << "INSERT INTO inventory " "(sku, name, description, baseCost, discountPercent) VALUES (" + test.GetSummary() + ");";
 }
 
 // bd: Delete by SKU

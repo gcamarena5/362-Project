@@ -67,9 +67,9 @@ public:
 	void SetDiscountPercent(double discountPercent) { _discountPercent = discountPercent; }
 
 	double GetDiscountCost() { return _baseCost * (1 - _discountPercent); }
-	
-	// bd: edited: Get summary is in format where I can print to MYSQL Directly
-	string GetSummary() { return '\'' + _sku + "', '" + _name + "', '" + _description + "', " + to_string(_baseCost) + ", " + to_string(_discountPercent); }
+
+	// Ethan: DIP. GetSummary() was removed. It built MySQL text, and the SQL now lives
+	// only in MySqlInventoryRepository::add(). 
 };
 
 class Database

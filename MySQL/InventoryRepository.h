@@ -16,11 +16,12 @@ public:
 
 	virtual std::vector<std::vector<std::string>> getAll() = 0;
 
+	// Throws std::runtime_error if the database fails.
 	virtual void add(Item item) = 0;
 
 	// Throws std::runtime_error if the database fails.
 	virtual bool remove(const std::string& sku) = 0;
 
-	// Throws std::runtime_error if the database fails.
+	// Throws std::runtime_error if the database fails. 
 	virtual bool updateField(const std::string& sku, const std::string& column, const std::string& newValue) = 0;
 };
